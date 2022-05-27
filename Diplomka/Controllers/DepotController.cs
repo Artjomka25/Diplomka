@@ -53,9 +53,41 @@ namespace Diplomka.Controllers
         {
             db.Depots.Add(depot);
             await db.SaveChangesAsync();
-            return RedirectToAction("Depots");
+            return RedirectToAction("AddDepotsWays");
         }
 
+        public async Task<IActionResult> AddDepotsWays()
+        {
+            Random random = new Random();
+            Depot depot = new Depot();
+            depot = db.Depots.OrderByDescending(p => p.DepotID).First(p => !String.IsNullOrEmpty(p.DepotID.ToString()));
+            foreach (Warehouse i in db.Warehouses)
+            {
+                DistanceReference distanceReference = new DistanceReference();
+                distanceReference.ID_FirstPoint = depot.DepotID;
+                distanceReference.NameFirstPoint = depot.Name;
+                distanceReference.TypeFirstPoint = "Автобаза";
+                distanceReference.ID_SecondPoint = i.WarehouseID;
+                distanceReference.NameSecondPoint = i.Name;
+                distanceReference.TypeSecondPoint = "Склад";
+                distanceReference.Distance = random.Next(15, 200);
+                db.DistanceReferences.Add(distanceReference);
+            }
+            foreach (Factory i in db.Factories)
+            {
+                DistanceReference distanceReference = new DistanceReference();
+                distanceReference.ID_FirstPoint = i.FactoryID;
+                distanceReference.NameFirstPoint = i.Name;
+                distanceReference.TypeFirstPoint = "Завод";
+                distanceReference.ID_SecondPoint = depot.DepotID;
+                distanceReference.NameSecondPoint = depot.Name;
+                distanceReference.TypeSecondPoint = "Автобаза";
+                distanceReference.Distance = random.Next(15, 200);
+                db.DistanceReferences.Add(distanceReference);
+            }
+            await db.SaveChangesAsync();
+            return RedirectToAction("Depots");
+        }
         //=======================================================
 
         public IActionResult CreateCar()

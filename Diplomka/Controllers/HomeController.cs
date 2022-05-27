@@ -75,9 +75,94 @@ namespace Diplomka.Controllers
         //=======================================================
 
         public ActionResult CreatePlan()
-        {            
+        {
+            List<Factory> factory = new List<Factory>();
+            List<Application> PreApplication = new List<Application>();
+            List<Application> CurrentApplication = new List<Application>();
+            List<CargoRemnant> PreRemnants = new List<CargoRemnant>();
+            int Sum = 0;
+            int[] count = new int[8];
+            int minSum;
+            int minWay;
+            int Way = 0;
 
-           
+            factory = db.Factories.ToList();
+            for (count[0] = 0; count[0] < db.Factories.Count() - 1; count[0]++)
+            {
+                for ( count[1] = 0; count[1] < db.Factories.Count() - 1; count[1]++)
+                {
+                    if (count[1] != count[0])
+                        for ( count[2] = 0; count[2] < db.Factories.Count() - 1; count[2]++)
+                        {
+                            if ((count[2] != count[1]) & (count[2] != count[0]))
+                            {
+                                CurrentApplication.Clear();
+                                PreRemnants = db.CargoRemnants.ToList();
+                                foreach (int i in count)
+                                {
+                                    foreach(Order order in db.Orders.Where(o=>o.FactoryID==i))
+                                    {
+                                        PreRemnants = db.CargoRemnants.Where(p => p.GrainID == order.GrainID).Where(p => p.Volume >= order.Volume).ToList();
+
+                                        foreach (CargoRemnant Remnants in PreRemnants)
+                                        {
+                                            Application application = new Application();
+                                            application.WarehouseID = db.DistanceReferences.Where(p => p.TypeFirstPoint.Equals("Склад"))
+                                                                                           .Where(p=>p.TypeSecondPoint.Equals("Завод"))
+                                                                                           .Where(p=>p.ID_SecondPoint==order.FactoryID)
+                                                                                           .FirstOrDefault(p=>p.ID_FirstPoint==Remnants.WarehouseID).ID_FirstPoint;
+                                        }
+
+                                        foreach (Depot depot in db.Depots)
+                                        {
+
+                                        }
+
+                                    }
+                                }
+                                if ((count[0] == 0) & (count[1] == 1) & (count[2] == 2))
+                                {
+                                    minSum = Sum;
+                                    minWay = Way;
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                                //for (count[3] = 0; count[3] < db.Factories.Count() - 1; count[3]++)
+                                //{
+                                //    if ((count[3] != count[2]) & (count[3] != count[1]) & (count[3] != count[0]))
+                                //        for (count[4] = 0; count[4] < db.Factories.Count() - 1; count[4]++)
+                                //        {
+                                //            if ((count[4] != count[3]) & (count[4] != count[2]) & (count[4] != count[1]) & (count[4] != count[0]))
+
+                                //                for (count[5] = 0; count[5] < db.Factories.Count() - 1; count[5]++)
+                                //                {
+                                //                    if ((count[5] != count[4]) & (count[5] != count[3]) & (count[5] != count[2]) & (count[5] != count[1]) & (count[5] != count[0]))
+                                //                        for (count[6] = 0; count[6] < db.Factories.Count() - 1; count[6]++)
+                                //                        {
+                                //                            if ((count[6] != count[5]) & (count[6] != count[4]) & (count[6] != count[3]) & (count[6] != count[2]) & (count[6] != count[1]) & (count[6] != count[0]))
+
+                                //                                for (count[7] = 0; count[7] < db.Factories.Count() - 1; count[7]++)
+                                //                                {
+                                //                                    if ((count[7] != count[6]) & (count[7] != count[5]) & (count[7] != count[4]) & (count[7] != count[3]) & (count[7] != count[2]) & (count[7] != count[1]) & (count[7] != count[0]))
+                                //                                    {
+
+
+                                //                                    }
+                                //                                }
+
+                                //                        }
+                                //                }
+                                //        }
+                                //}
+                        }
+
+
+                }
+            }
+
 
 
 

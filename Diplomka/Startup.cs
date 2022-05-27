@@ -26,7 +26,7 @@ namespace Diplomka
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = "Server = (localdb)\\mssqllocaldb;" +
-                                        "Database = Applications24; " +
+                                        "Database = Applications25; " +
                                         "Trusted_Connection = true";
             services.AddDbContext<MyBaseContext>(options =>
                               options.UseSqlServer(connection));

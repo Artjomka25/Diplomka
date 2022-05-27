@@ -37,6 +37,39 @@ namespace Diplomka.Controllers
         {           
             db.Factories.Add(factory);
             await db.SaveChangesAsync();
+            return RedirectToAction("AddFactoriesWays");
+        }
+
+        public async Task<IActionResult> AddFactoriesWays()
+        {
+            Factory factories = new Factory();
+            factories = db.Factories.OrderByDescending(p => p.FactoryID).First(p => !String.IsNullOrEmpty(p.FactoryID.ToString()));
+            Random random = new Random();
+            foreach (Warehouse i in db.Warehouses)
+            {
+                DistanceReference distanceReference = new DistanceReference();
+                distanceReference.ID_FirstPoint = i.WarehouseID;
+                distanceReference.NameFirstPoint = i.Name;
+                distanceReference.TypeFirstPoint = "Склад";
+                distanceReference.ID_SecondPoint = factories.FactoryID;
+                distanceReference.NameSecondPoint = factories.Name;
+                distanceReference.TypeSecondPoint = "Завод";
+                distanceReference.Distance = random.Next(15, 200);
+                db.DistanceReferences.Add(distanceReference);
+            }
+            foreach (Depot i in db.Depots)
+            {
+                DistanceReference distanceReference = new DistanceReference();
+                distanceReference.ID_FirstPoint = factories.FactoryID;
+                distanceReference.NameFirstPoint = factories.Name;
+                distanceReference.TypeFirstPoint = "Завод";
+                distanceReference.ID_SecondPoint = i.DepotID;
+                distanceReference.NameSecondPoint = i.Name;
+                distanceReference.TypeSecondPoint = "Автобаза";
+                distanceReference.Distance = random.Next(15, 200);
+                db.DistanceReferences.Add(distanceReference);
+            }
+            await db.SaveChangesAsync();
             return RedirectToAction("Factories");
         }
 

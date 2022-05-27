@@ -63,12 +63,43 @@ namespace Diplomka.Controllers
         {
             db.Warehouses.Add(warehouse);
             await db.SaveChangesAsync();
+            return RedirectToAction("AddWarehouseWays");
+        }
+        public async Task<IActionResult> AddWarehouseWays()
+        {
+            Random random = new Random();
+            Warehouse warehouse = new Warehouse();
+            warehouse = db.Warehouses.OrderByDescending(p => p.WarehouseID).First(p => !String.IsNullOrEmpty(p.WarehouseID.ToString()));
+            foreach (Factory i in db.Factories)
+            {
+                DistanceReference distanceReference = new DistanceReference();
+                distanceReference.ID_FirstPoint = warehouse.WarehouseID;
+                distanceReference.NameFirstPoint = warehouse.Name;
+                distanceReference.TypeFirstPoint = "Склад";
+                distanceReference.ID_SecondPoint = i.FactoryID;
+                distanceReference.NameSecondPoint = i.Name;
+                distanceReference.TypeSecondPoint = "Завод";
+                distanceReference.Distance = random.Next(15, 200);
+                db.DistanceReferences.Add(distanceReference);
+            }
+            foreach (Depot i in db.Depots)
+            {
+                DistanceReference distanceReference = new DistanceReference();
+                distanceReference.ID_FirstPoint = i.DepotID;
+                distanceReference.NameFirstPoint = i.Name;
+                distanceReference.TypeFirstPoint = "Автобаза";
+                distanceReference.ID_SecondPoint = warehouse.WarehouseID;
+                distanceReference.NameSecondPoint = warehouse.Name;
+                distanceReference.TypeSecondPoint = "Склад";
+                distanceReference.Distance = random.Next(15, 200);
+                db.DistanceReferences.Add(distanceReference);
+            }
+            await db.SaveChangesAsync();
             return RedirectToAction("Warehouses");
         }
 
-
-        //=======================================================
-        public ActionResult BackToHome()
+            //=======================================================
+            public ActionResult BackToHome()
         {
             // Переход на главную страницу приложения
             return RedirectToAction("Warehouses");
