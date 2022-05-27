@@ -1,0 +1,20 @@
+﻿@model Diplomka.Models.Factory
+@{
+    ViewBag.Title = "Удаление данных о заводе";
+}
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>Вы уверены, что хотите удалить данные о заводе №@Model.FactoryID ?</dt>
+    </dl>
+
+    <div>
+        <form asp-controller="Factory" asp-action="Delete" method="post">
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Удалить" />
+            </div>
+        </form>
+    </div>
+</div>
+<a asp-action="BackToHome" class="btn btn-primary"> Отмена</a>
+

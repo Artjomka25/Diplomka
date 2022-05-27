@@ -1,0 +1,33 @@
+﻿@model Diplomka.Models.Car
+@{
+    ViewBag.Title = "Редактирование данных";
+}
+
+<h3>Изменение данных машины</h3>
+
+<form asp-action="EditCar" asp-controller="Depot" asp-route-id="@Model.CarID">
+    <div class="form-group">
+        <label hidden="true" asp-for="CarID" class="control-label">Id машины</label>
+        <input type="number" hidden="true" asp-for="CarID" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Название завода</label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PlateNumber" class="control-label">ГОС номер</label>
+        <input type="text" asp-for="PlateNumber" class="form-control" />
+    </div>  
+    
+    <div class="form-group">
+        <label asp-for="DepotID" class="control-label">Автобаза</label>
+        <select asp-for="DepotID" asp-items="ViewBag.Depot" class="form-control"></select>
+    </div>  
+
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="BackToCars" class="btn btn-primary"> Отмена</a>

@@ -1,0 +1,35 @@
+﻿@model Diplomka.Models.CargoRemnant
+@{
+    ViewBag.Title = "Редактирование данных";
+}
+
+<h3>Изменение остатков грузов</h3>
+
+<form asp-action="EditCargoRemnant" asp-controller="Warehouse">    
+    <div class="form-group">
+        <label hidden="true" asp-for="CargoRemnantID" class="control-label">Id зерна</label>
+        <input type="number" hidden="true" asp-for="CargoRemnantID" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="WarehouseID" class="control-label">Склад</label>
+        <select asp-for="WarehouseID" asp-items="ViewBag.Car" class="form-control"></select>
+    </div>   
+    
+    <div class="form-group">
+        <label asp-for="GrainID" class="control-label">Вид зерна</label>
+        <select asp-for="GrainID" asp-items="ViewBag.Grain" class="form-control"></select>
+    </div> 
+    
+    <div class="form-group">
+        <label asp-for="Volume" class="control-label">Объём</label>
+        <input type="number" asp-for="Volume" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Добавить" class="btn btn-primary" />
+    </div>
+
+</form>
+
+<a asp-action="BackToCargoRemnants" class="btn btn-primary"> Отмена</a>

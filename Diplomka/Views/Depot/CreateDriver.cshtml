@@ -1,0 +1,28 @@
+﻿@model Diplomka.Models.Driver
+
+@{
+    ViewBag.Title = "Новый водитель";
+}
+
+<h2>Добавление нового водителя</h2>
+
+<form asp-action="CreateDriver" asp-controller="Depot">
+    <div class="form-group">
+        <label asp-for="FIO" class="control-label">ФИО</label>
+        <input type="text" asp-for="FIO" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label">Номер телефона</label>
+        <input type="number" asp-for="PhoneNumber" class="form-control" />
+    </div>      
+    <div class="form-group">
+        <label asp-for="CarID" class="control-label">Машина</label>
+        <select asp-for="CarID" asp-items="ViewBag.Car" class="form-control"></select>
+    </div>      
+    <div class="form-group">
+        <input type="submit" value="Добавить" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="BackToDrivers" class="btn btn-primary"> Отмена</a>

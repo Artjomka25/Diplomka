@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Diplomka.Models.Factory>
+@{
+    ViewData["Title"] = "Список заказчиков";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Заводы</title>
+</head>
+
+<body>
+    <h2>Заводы</h2>
+
+    <h5><a asp-action="Create"> Новый завод</a></h5>
+
+    <table class="table table-bordered table-primary">
+        <tr>
+            <th>Id завода</th>
+            <th>Название</th>
+            <th>Адрес</th>            
+            <th></th>
+            <th></th>
+
+        </tr>
+        @foreach (Factory factory in Model)
+        {
+            <tr>
+                <td>@factory.FactoryID</td>
+                <td>@factory.Name</td>
+                <td>@factory.Address</td>                             
+                <td><a asp-action="Edit" asp-controller="Factory" asp-route-id="@factory.FactoryID">Изменить</a></td> 
+                <td><a asp-action="Delete" asp-controller="Factory" asp-route-id="@factory.FactoryID">Удалить</a></td>    
+            </tr>
+        }      
+    </table>
+</body>
+</html>

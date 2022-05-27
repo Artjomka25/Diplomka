@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Diplomka.Models.Order>
+@{
+    ViewData["Title"] = "Список заказов";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Заказы</title>
+</head>
+
+<body>
+    <h2>Заказы</h2>
+
+    <h5><a asp-action="Create"> Новый заказ</a></h5>
+
+    <table class="table table-bordered table-primary">
+        <tr>
+            <th>Id заказа</th>
+            <th>Заказчик</th>
+            <th>Вид зерна</th>
+            <th>Количество</th>
+            <th>Стоимость</th>
+            <th>Дата доставки</th>
+            <th>Статус</th>
+            <th></th>
+            <th></th>
+
+        </tr>
+        @foreach (Order order in Model.Where(o => o.Status == "Активен"))
+        {
+            <tr>
+                <td>@order.OrderID</td>
+                <td>@order.Factory.Name</td>
+                <td>@order.Grain.Name</td>
+                <td>@order.Volume</td>
+                <td>@order.Price</td>              
+                <td>@order.DeliveryDate</td>      
+                <td>@order.Status</td>                   
+                <td><a asp-action="Edit" asp-controller="Order" asp-route-id="@order.OrderID">Изменить</a></td> 
+                <td><a asp-action="Delete" asp-controller="Order" asp-route-id="@order.OrderID">Отменить</a></td>    
+            </tr>
+        }
+        @foreach (Order order in Model.Where(o => o.Status == "Выполнен"))
+        {
+            <tr>
+                <td>@order.OrderID</td>
+                <td>@order.Factory.Name</td>
+                <td>@order.Grain.Name</td>
+                <td>@order.Volume</td>
+                <td>@order.Price</td>              
+                <td>@order.DeliveryDate</td>      
+                <td>@order.Status</td>                   
+                <td><a asp-action="Update" asp-controller="Order" asp-route-id="@order.OrderID">Изменить</a></td> 
+                <td><a asp-action="Delete" asp-controller="Order" asp-route-id="@order.OrderID">Удалить</a></td>    
+            </tr>
+        }
+    </table>
+</body>
+</html>

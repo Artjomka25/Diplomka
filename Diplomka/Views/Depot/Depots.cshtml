@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Diplomka.Models.Depot>
+@{
+    ViewData["Title"] = "Список автобаз";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Автобазы</title>
+</head>
+
+<body>
+    <h2>Автобазы</h2>
+
+    <h5><a asp-action="CreateDepot"> Новая автобаза   </a><a asp-action="Cars">|  Машины   </a><a asp-action="Drivers">|   Водители</a></h5>
+
+    <table class="table table-bordered table-primary">
+        <tr>
+            <th>Id завода</th>
+            <th>Название</th>
+            <th>Адрес</th>            
+            <th></th>
+            <th></th>
+
+        </tr>
+        @foreach (Depot depot in Model)
+        {
+            <tr>
+                <td>@depot.DepotID</td>
+                <td>@depot.Name</td>
+                <td>@depot.Address</td>                             
+                <td><a asp-action="EditDepot" asp-controller="Depot" asp-route-id="@depot.DepotID">Изменить</a></td> 
+                <td><a asp-action="DeleteDepot" asp-controller="Depot" asp-route-id="@depot.DepotID">Удалить</a></td>    
+            </tr>
+        }      
+    </table>
+</body>
+</html>

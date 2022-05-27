@@ -1,0 +1,25 @@
+﻿@model Diplomka.Models.Depot
+
+@{
+    ViewBag.Title = "Новая автобаза";
+}
+
+<h2>Добавление новой автобазы</h2>
+
+<form asp-action="CreateDepot" asp-controller="Depot">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Название автобазы</label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address" class="control-label">Адрес</label>
+        <input type="text" asp-for="Address" class="form-control" />
+    </div>      
+
+    <div class="form-group">
+        <input type="submit" value="Добавить" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="BackToDepots" class="btn btn-primary"> Отмена</a>

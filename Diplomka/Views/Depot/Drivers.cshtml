@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Diplomka.Models.Driver>
+@{
+    ViewData["Title"] = "Список водителей";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Водители</title>
+</head>
+
+<body>
+    <h2>Водители</h2>
+
+    <h5><a asp-action="CreateDriver"> Новый водитель</a></h5>
+
+    <table class="table table-bordered table-primary">
+        <tr>
+            <th>Id водителя</th>
+            <th>ФИО</th>
+            <th>Номер телефона</th>     
+            <th>Машина</th>      
+            <th></th>
+            <th></th>
+
+        </tr>
+        @foreach (Driver driver in Model)
+        {
+            <tr>
+                <td>@driver.DriverID</td>
+                <td>@driver.FIO</td>
+                <td>@driver.PhoneNumber</td>   
+                <td>@driver.Car.Name</td>       
+                <td><a asp-action="EditDriver" asp-controller="Depot" asp-route-id="@driver.DriverID">Изменить</a></td> 
+                <td><a asp-action="DeleteDriver" asp-controller="Depot" asp-route-id="@driver.DriverID">Удалить</a></td>    
+            </tr>
+        }      
+    </table>
+</body>
+</html>

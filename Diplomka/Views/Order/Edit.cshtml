@@ -1,0 +1,38 @@
+﻿@model Diplomka.Models.Order
+@{
+    ViewBag.Title = "Редактирование заказа";
+}
+
+<h3>Изменение данных заказа</h3>
+
+<form asp-action="Edit" asp-controller="Order" asp-route-id="@Model.OrderID">
+    <div class="form-group">
+        <label hidden="true" asp-for="OrderID" class="control-label">Id склада</label>
+        <input type="number" hidden="true" asp-for="OrderID" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="FactoryID" class="control-label">Заказчик</label>
+        <select asp-for="FactoryID" asp-items="ViewBag.Factory" class="form-control"></select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GrainID" class="control-label">Вид зерна</label>
+        <select asp-for="GrainID" asp-items="ViewBag.Grain" class="form-control"></select>
+    </div>   
+
+    <div class="form-group">
+        <label asp-for="Volume" class="control-label">Объём</label>
+        <input type="number" asp-for="Volume" class="form-control" />
+    </div>
+   
+    <div class="form-group">
+        <label asp-for="DeliveryDate" class="control-label">Дата доставки</label>
+        <input type="datetime" asp-for="DeliveryDate" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="BackToHome" class="btn btn-primary"> Отмена</a>

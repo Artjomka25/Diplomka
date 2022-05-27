@@ -1,0 +1,28 @@
+﻿@model Diplomka.Models.Depot
+@{
+    ViewBag.Title = "Редактирование данных";
+}
+
+<h3>Изменение данных автобазы</h3>
+
+<form asp-action="EditDepot" asp-controller="Depot">
+    <div class="form-group">
+        <label hidden="true" asp-for="DepotID" class="control-label">Id автобазы</label>
+        <input type="number" hidden="true" asp-for="DepotID" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Name" class="control-label">Название завода</label>
+        <input type="text" asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address" class="control-label">Адрес</label>
+        <input type="text" asp-for="Address" class="form-control" />
+    </div>      
+
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="BackToDepots" class="btn btn-primary"> Отмена</a>
