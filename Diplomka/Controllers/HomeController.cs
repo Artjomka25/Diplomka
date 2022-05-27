@@ -97,26 +97,63 @@ namespace Diplomka.Controllers
                             if ((count[2] != count[1]) & (count[2] != count[0]))
                             {
                                 CurrentApplication.Clear();
+                                Way = 0;
+                                Sum = 0;
                                 PreRemnants = db.CargoRemnants.ToList();
                                 foreach (int i in count)
                                 {
                                     foreach(Order order in db.Orders.Where(o=>o.FactoryID==i))
                                     {
-                                        PreRemnants = db.CargoRemnants.Where(p => p.GrainID == order.GrainID).Where(p => p.Volume >= order.Volume).ToList();
-
-                                        foreach (CargoRemnant Remnants in PreRemnants)
+                                        PreRemnants = db.CargoRemnants.ToList();
+                                        Application application = new Application();
+                                        List<DistanceReference> distance = new List<DistanceReference>();
+                                        foreach (CargoRemnant Remnants in PreRemnants.Where(p => p.GrainID == order.GrainID).ToList())
                                         {
-                                            Application application = new Application();
-                                            application.WarehouseID = db.DistanceReferences.Where(p => p.TypeFirstPoint.Equals("Склад"))
-                                                                                           .Where(p=>p.TypeSecondPoint.Equals("Завод"))
-                                                                                           .Where(p=>p.ID_SecondPoint==order.FactoryID)
-                                                                                           .FirstOrDefault(p=>p.ID_FirstPoint==Remnants.WarehouseID).ID_FirstPoint;
+                                            if (Remnants.Volume >= order.Volume)
+                                            {
+                                                distance.Add(db.DistanceReferences.Where(p => p.TypeFirstPoint.Equals("Склад"))
+                                                                                           .Where(p => p.TypeSecondPoint.Equals("Завод"))
+                                                                                           .Where(p => p.ID_SecondPoint == order.FactoryID)
+                                                                                           .FirstOrDefault(p => p.ID_FirstPoint == Remnants.WarehouseID));
+                                            }
+                                            
+                                        }
+                                        if (distance.Count != 0)
+                                        {
+                                            application.WarehouseID = distance.OrderBy(p => p.Distance).FirstOrDefault(p => !String.IsNullOrEmpty(p.ID_FirstPoint.ToString())).ID_FirstPoint;
+                                            Way += distance.OrderBy(p => p.Distance).FirstOrDefault(p => !String.IsNullOrEmpty(p.ID_FirstPoint.ToString())).Distance;
+                                            foreach (Depot depot in db.Depots)
+                                            {
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            distance.Clear();
+                                            int OrderRemainMass = order.Volume;
+                                            foreach (CargoRemnant Remnants in PreRemnants.Where(p => p.GrainID == order.GrainID))
+                                            {
+                                                if (Remnants.Volume > 0)
+                                                {
+                                                    distance.Add(db.DistanceReferences.Where(p => p.TypeFirstPoint.Equals("Склад"))
+                                                                                           .Where(p => p.TypeSecondPoint.Equals("Завод"))
+                                                                                           .Where(p => p.ID_SecondPoint == order.FactoryID)
+                                                                                           .FirstOrDefault(p => p.ID_FirstPoint == Remnants.WarehouseID));
+                                                    while (OrderRemainMass > 0)
+                                                    {
+                                                        distance = distance.OrderBy(p => p.Distance).ToList();
+
+                                                        foreach (Depot depot in db.Depots)
+                                                        {
+
+                                                        }
+
+                                                    }
+                                                }
+                                                    
+                                            }
                                         }
 
-                                        foreach (Depot depot in db.Depots)
-                                        {
-
-                                        }
 
                                     }
                                 }
