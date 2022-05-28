@@ -60,6 +60,9 @@ namespace Diplomka.Controllers
 
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewBag.Factory = new SelectList(db.Factories.ToList(), "FactoryID", "Name");
+            ViewBag.Grain = new SelectList(db.Grains.ToList(), "GrainID", "Name");
+
             if (id != null)
             {
                 Order orders = await db.Orders.FirstOrDefaultAsync(p => p.OrderID == id);
@@ -74,7 +77,7 @@ namespace Diplomka.Controllers
         {
             db.Orders.Update(orders);
             await db.SaveChangesAsync();
-            return RedirectToAction("Order");
+            return RedirectToAction("Orders");
         }
 
         //=======================================================

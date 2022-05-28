@@ -99,7 +99,7 @@ namespace Diplomka.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCar(Car car)
         {
-            car.Status = "Свободна";
+            car.Status = "Свободен";
             db.Cars.Add(car);
             await db.SaveChangesAsync();
             return RedirectToAction("Cars");
@@ -184,6 +184,7 @@ namespace Diplomka.Controllers
         [HttpPost]
         public async Task<IActionResult> EditCar(Car car)
         {
+            car.Status = "Свободен";
             db.Cars.Update(car);
             await db.SaveChangesAsync();
             return RedirectToAction("Cars");

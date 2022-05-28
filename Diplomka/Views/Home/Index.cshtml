@@ -13,13 +13,12 @@
 
 <body>
     <h2>Заявки</h2>
-
+          
 <form method="get">
     <div class="form-inline">
-
-        <label class="control-label">Статусы: </label>
+        <label class="control-label">Статусы:&nbsp;</label>
         <select name="Status" asp-items="Model.Orders" class="form-control"></select>
-
+        <label>&nbsp;&nbsp;</label>
         <input type="submit" value="Фильтр" class="btn btn-primary" />
         <br />
     </div>
@@ -60,5 +59,6 @@
         </tr>
     }
 </table>
+    <a asp-action="/HomeController/CreatePlan" class="btn btn-primary"> Сформировать план</a>
 </body>
 </html>
