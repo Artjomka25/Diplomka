@@ -1,11 +1,10 @@
-﻿@using Diplomka.Models
+﻿
+@using Diplomka.Models
 @model Diplomka.Models.CommonList
 
 @{
     ViewData["Title"] = "Список заявок";
 }
-
-<!DOCTYPE html>
 
 <html>
 <head>
@@ -21,13 +20,13 @@
         <label class="control-label">Статусы: </label>
         <select name="Status" asp-items="Model.Orders" class="form-control"></select>
 
-        <input type="submit" value="Фильтр" id="filterSubmit" class="btn btn-primary" style="display:none" />
+        <input type="submit" value="Фильтр" class="btn btn-primary" />
         <br />
     </div>
 </form>
 <br />
 
-<table class="table table-condensed table-bordered table-primary">
+<table class="table table-bordered table-primary">
     <tr>
         <th>Id заявки</th>
         <th>Id заказа</th>
@@ -43,13 +42,11 @@
             </a>
         </th>
         <th>Статус</th>
-        <th></th>
-
     </tr>
 
     @foreach (var p in Model.Applications)
     {
-        <tr>
+        <tr bgcolor = "#FFFFFF">
             <td>@p.ApplicationID</td>
             <td>@p.OrderID</td>
             <td>@p.Warehouse.Name</td>
@@ -65,22 +62,3 @@
 </table>
 </body>
 </html>
-
-
-@section scripts{
-    <script>
-        // Активация раскрывающегося списка выбора статуса заявки
-        const select = document.getElementById("status");
-
-        select.onchange = e => {
-            document.getElementById('filterSubmit').click();
-        }
-
-    </script>
-}
-
-
-
-
-
-

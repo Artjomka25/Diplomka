@@ -30,7 +30,7 @@
         </tr>
         @foreach (Order order in Model.Where(o => o.Status == "Активен"))
         {
-            <tr>
+            <tr  bgcolor = "#FFFFFF">
                 <td>@order.OrderID</td>
                 <td>@order.Factory.Name</td>
                 <td>@order.Grain.Name</td>
@@ -44,7 +44,7 @@
         }
         @foreach (Order order in Model.Where(o => o.Status == "Выполнен"))
         {
-            <tr>
+            <tr  bgcolor = "#FFFFFF">
                 <td>@order.OrderID</td>
                 <td>@order.Factory.Name</td>
                 <td>@order.Grain.Name</td>

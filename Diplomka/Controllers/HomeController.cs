@@ -24,10 +24,10 @@ namespace Diplomka.Controllers
         public ActionResult Index(string status)
         {
             IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)
-                                                                 .Include(p => p.Order)
-                                                                 .Include(p => p.Depot)
-                                                                 .Include(p => p.Car)
-                                                                 .Include(p => p.Driver);
+                                                     .Include(p => p.Order)
+                                                     .Include(p => p.Depot)
+                                                     .Include(p => p.Car)
+                                                     .Include(p => p.Driver);
             // Фильтрация по статусу заказа
             if (!String.IsNullOrEmpty(status) && !status.Equals("Все"))
             {
@@ -39,36 +39,31 @@ namespace Diplomka.Controllers
                 Applications = applications.ToList(),
                 Orders = new SelectList(new List<string>()
                 {
-                    "Все",
-                    "Активен",
-                    "Выполнен"
-                })
+               "Все",
+               "Активен",
+               "Выполнен"})
             };
             return View(commonList);
         }
 
         //===========================================
         [HttpPost]
-        public async Task<IActionResult> Index(
-                                    SortState sortOrder = SortState.DeliveryDateAsc)
+        public async Task<IActionResult> Index(SortState sortOrder = SortState.DeliveryDateAsc)
         {
             IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)
-                                                                 .Include(p => p.Order)
-                                                                 .Include(p => p.Depot)
-                                                                 .Include(p => p.Car)
-                                                                 .Include(p => p.Driver);
+                                                                             .Include(p => p.Order)
+                                                                             .Include(p => p.Depot)
+                                                                             .Include(p => p.Car)
+                                                                             .Include(p => p.Driver);
+
             ViewData["DeliveryDateSort"] = sortOrder == SortState.DeliveryDateAsc ?
                                           SortState.DeliveryDateDesc : SortState.DeliveryDateAsc;
-            
-            switch (sortOrder)
+            applications = sortOrder switch
             {
-                case SortState.DeliveryDateAsc:
-                    applications = applications.OrderByDescending(s => s.Order.DeliveryDate);
-                    break;                
-                default:
-                    applications = applications.OrderBy(s => s.Order.DeliveryDate);
-                    break;
-            }
+                SortState.DeliveryDateAsc => applications.OrderBy(s => s.FullPrice),
+                SortState.DeliveryDateDesc => applications.OrderByDescending(s => s.FullPrice),
+                _ => applications.OrderBy(s => s.ApplicationID),
+            };            
             return View(await applications.AsNoTracking().ToListAsync());
         }
 
@@ -77,22 +72,23 @@ namespace Diplomka.Controllers
         public ActionResult CreatePlan()
         {
             List<Factory> factory = new List<Factory>();
+            factory = db.Factories.ToList();
             List<Application> PreApplication = new List<Application>();
             List<Application> CurrentApplication = new List<Application>();
             List<CargoRemnant> PreRemnants = new List<CargoRemnant>();
             int Sum = 0;
-            int[] count = new int[8];
+            int[] count = new int[3]; // потом сделать =8
             int minSum;
             int minWay;
             int Way = 0;
 
-            factory = db.Factories.ToList();
             for (count[0] = 0; count[0] < db.Factories.Count() - 1; count[0]++)
             {
                 for ( count[1] = 0; count[1] < db.Factories.Count() - 1; count[1]++)
                 {
                     if (count[1] != count[0])
-                        for ( count[2] = 0; count[2] < db.Factories.Count() - 1; count[2]++)
+                    {
+                        for (count[2] = 0; count[2] < db.Factories.Count() - 1; count[2]++)
                         {
                             if ((count[2] != count[1]) & (count[2] != count[0]))
                             {
@@ -102,12 +98,12 @@ namespace Diplomka.Controllers
                                 PreRemnants = db.CargoRemnants.ToList();
                                 foreach (int i in count)
                                 {
-                                    foreach(Order order in db.Orders.Where(o=>o.FactoryID==i))
+                                    foreach (Order order in db.Orders.Where(o => o.FactoryID == i).Where(o => o.Status=="Активен"))
                                     {
                                         PreRemnants = db.CargoRemnants.ToList();
                                         Application application = new Application();
                                         List<DistanceReference> distance = new List<DistanceReference>();
-                                        foreach (CargoRemnant Remnants in PreRemnants.Where(p => p.GrainID == order.GrainID).ToList())
+                                        foreach (CargoRemnant Remnants in PreRemnants.Where(p => p.GrainID == order.GrainID))
                                         {
                                             if (Remnants.Volume >= order.Volume)
                                             {
@@ -116,16 +112,22 @@ namespace Diplomka.Controllers
                                                                                            .Where(p => p.ID_SecondPoint == order.FactoryID)
                                                                                            .FirstOrDefault(p => p.ID_FirstPoint == Remnants.WarehouseID));
                                             }
-                                            
+
                                         }
                                         if (distance.Count != 0)
                                         {
                                             application.WarehouseID = distance.OrderBy(p => p.Distance).FirstOrDefault(p => !String.IsNullOrEmpty(p.ID_FirstPoint.ToString())).ID_FirstPoint;
                                             Way += distance.OrderBy(p => p.Distance).FirstOrDefault(p => !String.IsNullOrEmpty(p.ID_FirstPoint.ToString())).Distance;
+                                            distance.Clear();
                                             foreach (Depot depot in db.Depots)
                                             {
-
+                                                distance.Add(db.DistanceReferences.Where(p => p.TypeFirstPoint.Equals("Автобаза"))
+                                                                                           .Where(p => p.TypeSecondPoint.Equals("Склад"))
+                                                                                           .Where(p => p.ID_SecondPoint == application.WarehouseID)
+                                                                                           .FirstOrDefault(p => p.ID_FirstPoint == depot.DepotID));
                                             }
+                                            application.DepotID = distance.OrderBy(p => p.Distance).FirstOrDefault(p => !String.IsNullOrEmpty(p.ID_FirstPoint.ToString())).ID_FirstPoint;
+
                                         }
                                         else
                                         {
@@ -150,7 +152,7 @@ namespace Diplomka.Controllers
 
                                                     }
                                                 }
-                                                    
+
                                             }
                                         }
 
@@ -167,34 +169,36 @@ namespace Diplomka.Controllers
 
                                 }
                             }
-                                //for (count[3] = 0; count[3] < db.Factories.Count() - 1; count[3]++)
-                                //{
-                                //    if ((count[3] != count[2]) & (count[3] != count[1]) & (count[3] != count[0]))
-                                //        for (count[4] = 0; count[4] < db.Factories.Count() - 1; count[4]++)
-                                //        {
-                                //            if ((count[4] != count[3]) & (count[4] != count[2]) & (count[4] != count[1]) & (count[4] != count[0]))
+                            //for (count[3] = 0; count[3] < db.Factories.Count() - 1; count[3]++)
+                            //{
+                            //    if ((count[3] != count[2]) & (count[3] != count[1]) & (count[3] != count[0]))
+                            
+                            //        for (count[4] = 0; count[4] < db.Factories.Count() - 1; count[4]++)
+                            //        {
+                            //            if ((count[4] != count[3]) & (count[4] != count[2]) & (count[4] != count[1]) & (count[4] != count[0]))
 
-                                //                for (count[5] = 0; count[5] < db.Factories.Count() - 1; count[5]++)
-                                //                {
-                                //                    if ((count[5] != count[4]) & (count[5] != count[3]) & (count[5] != count[2]) & (count[5] != count[1]) & (count[5] != count[0]))
-                                //                        for (count[6] = 0; count[6] < db.Factories.Count() - 1; count[6]++)
-                                //                        {
-                                //                            if ((count[6] != count[5]) & (count[6] != count[4]) & (count[6] != count[3]) & (count[6] != count[2]) & (count[6] != count[1]) & (count[6] != count[0]))
+                            //                for (count[5] = 0; count[5] < db.Factories.Count() - 1; count[5]++)
+                            //                {
+                            //                    if ((count[5] != count[4]) & (count[5] != count[3]) & (count[5] != count[2]) & (count[5] != count[1]) & (count[5] != count[0]))
+                            //                        for (count[6] = 0; count[6] < db.Factories.Count() - 1; count[6]++)
+                            //                        {
+                            //                            if ((count[6] != count[5]) & (count[6] != count[4]) & (count[6] != count[3]) & (count[6] != count[2]) & (count[6] != count[1]) & (count[6] != count[0]))
 
-                                //                                for (count[7] = 0; count[7] < db.Factories.Count() - 1; count[7]++)
-                                //                                {
-                                //                                    if ((count[7] != count[6]) & (count[7] != count[5]) & (count[7] != count[4]) & (count[7] != count[3]) & (count[7] != count[2]) & (count[7] != count[1]) & (count[7] != count[0]))
-                                //                                    {
+                            //                                for (count[7] = 0; count[7] < db.Factories.Count() - 1; count[7]++)
+                            //                                {
+                            //                                    if ((count[7] != count[6]) & (count[7] != count[5]) & (count[7] != count[4]) & (count[7] != count[3]) & (count[7] != count[2]) & (count[7] != count[1]) & (count[7] != count[0]))
+                            //                                    {
 
 
-                                //                                    }
-                                //                                }
+                            //                                    }
+                            //                                }
 
-                                //                        }
-                                //                }
-                                //        }
-                                //}
+                            //                        }
+                            //                }
+                            //        }
+                            //}
                         }
+                    }
 
 
                 }

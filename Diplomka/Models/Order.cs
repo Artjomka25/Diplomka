@@ -18,6 +18,6 @@ namespace Diplomka.Models
         public Factory Factory { get; set; }
 
         public CargoRemnant CargoRemnant { get; set; }
-
+        //public List<Application> UseApplications { get; set; } = new();
     }
 }
