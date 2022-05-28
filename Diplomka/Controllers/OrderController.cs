@@ -75,6 +75,9 @@ namespace Diplomka.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Order orders)
         {
+            Grain grain = await db.Grains.FirstOrDefaultAsync(g => g.GrainID == orders.GrainID);
+            orders.Status = "Активен";
+            orders.Price = orders.Volume * grain.Price;
             db.Orders.Update(orders);
             await db.SaveChangesAsync();
             return RedirectToAction("Orders");

@@ -74,17 +74,14 @@ namespace Diplomka.Controllers
             foreach (Application a in delete)
             {
                 db.Applications.Remove(a);
-                db.SaveChanges();
             }
             foreach (Order o in db.Orders.Where(s => s.Status == "Выполняется"))
             {
                 o.Status = "Выполнен";
-                db.SaveChanges();
             }
             foreach (Car c in db.Cars.Where(s => s.Status == "Занят"))
             {
                 c.Status = "Свободен";
-                db.SaveChanges();
             }
 
             List<Factory> factory = new List<Factory>();
@@ -420,23 +417,23 @@ namespace Diplomka.Controllers
             foreach (Application application1 in PreApplication)
             {
                 db.Applications.Add(application1);
-                db.SaveChanges();
             }
             foreach (CargoRemnant crg in db.CargoRemnants)
             {
-                crg.Volume = PreRemnants.Where(p => p.CargoRemnantID == crg.CargoRemnantID).FirstOrDefault(g => g.GrainID == crg.GrainID).Volume;
-                db.SaveChanges();
+                if (PreRemnants.Where(p => p.CargoRemnantID == crg.CargoRemnantID).FirstOrDefault(g => g.GrainID == crg.GrainID) != null)
+                    crg.Volume = PreRemnants.Where(p => p.CargoRemnantID == crg.CargoRemnantID).FirstOrDefault(g => g.GrainID == crg.GrainID).Volume;
+
             }
             foreach (Order o in db.Orders.Where(s => s.Status == "Активен"))
             {
                 o.Status = "Выполняется";
-                db.SaveChanges();
             }
             foreach (Car car in db.Cars)
             {
-                car.Status = PreCars.FirstOrDefault(c => c.CarID == car.CarID).Status;
-                db.SaveChanges();
+                if (PreCars.FirstOrDefault(c => c.CarID == car.CarID) != null)
+                    car.Status = PreCars.FirstOrDefault(c => c.CarID == car.CarID).Status;
             }
+            db.SaveChanges();
 
             // Переход на главную страницу приложения
             return RedirectToAction("Index");

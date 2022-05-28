@@ -20,7 +20,8 @@
             <th>Id машины</th>
             <th>Название</th>
             <th>ГОС номер</th>     
-            <th>Автобаза</th>      
+            <th>Статус</th>    
+            <th>Автобаза</th>   
             <th></th>
             <th></th>
 
@@ -30,7 +31,8 @@
             <tr bgcolor = "#FFFFFF">
                 <td>@car.CarID</td>
                 <td>@car.Name</td>
-                <td>@car.PlateNumber</td>   
+                <td>@car.PlateNumber</td>  
+                <td>@car.Status</td>       
                 <td>@car.Depot.Name</td>       
                 <td><a asp-action="EditCar" asp-controller="Depot" asp-route-id="@car.CarID">Изменить</a></td> 
                 <td><a asp-action="DeleteCar" asp-controller="Depot" asp-route-id="@car.CarID">Удалить</a></td>    
