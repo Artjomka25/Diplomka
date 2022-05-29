@@ -31,11 +31,11 @@ namespace Diplomka.Controllers
         {
             if (User.IsInRole(RoleEnum.Администратор.ToString()))
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Home");
             }
             if (User.IsInRole(RoleEnum.Планировщик.ToString()))
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Home");
             }
             if (User.IsInRole(RoleEnum.Заказчик.ToString()))
             {
@@ -57,11 +57,11 @@ namespace Diplomka.Controllers
                     await Authenticate(user); // аутентификация
                     if (User.IsInRole(RoleEnum.Администратор.ToString()))
                     {
-                        return RedirectToAction("Applications", "Application");
+                        return RedirectToAction("Applications", "Home");
                     }
                     if (User.IsInRole(RoleEnum.Планировщик.ToString()))
                     {
-                        return RedirectToAction("Applications", "Application");
+                        return RedirectToAction("Applications", "Home");
                     }
                     if (User.IsInRole(RoleEnum.Заказчик.ToString()))
                     {
