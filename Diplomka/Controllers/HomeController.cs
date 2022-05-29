@@ -1,4 +1,5 @@
 ﻿using Diplomka.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace Diplomka.Controllers
 {
@@ -19,9 +21,9 @@ namespace Diplomka.Controllers
         {
             db = context;
         }
-
+        
         [HttpGet]
-        public ActionResult Index(string status)
+        public ActionResult Applications(string status)
         {
             IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)
                                                      .Include(p => p.Order)
@@ -47,7 +49,7 @@ namespace Diplomka.Controllers
 
         //===========================================
         [HttpPost]
-        public async Task<IActionResult> Index(SortState sortOrder = SortState.DeliveryDateAsc)
+        public async Task<IActionResult> Applications(SortState sortOrder = SortState.DeliveryDateAsc)
         {
             IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)
                                                                              .Include(p => p.Order)
@@ -98,12 +100,13 @@ namespace Diplomka.Controllers
             int Way = 0;
 
             factory = db.Factories.ToList();
-            for (count[0] = 1; count[0] < db.Factories.Count(); count[0]++)
+            for (count[0] = 1; count[0] <= db.Factories.Count(); count[0]++)
             {
-                for (count[1] = 1; count[1] < db.Factories.Count(); count[1]++)
+                for (count[1] = 1; count[1] <= db.Factories.Count(); count[1]++)
                 {
                     if (count[1] != count[0])
-                        for (count[2] = 1; count[2] < db.Factories.Count(); count[2]++)
+                    {
+                        for (count[2] = 1; count[2] <= db.Factories.Count(); count[2]++)
                         {
                             if ((count[2] != count[1]) & (count[2] != count[0]))
                             {
@@ -159,9 +162,13 @@ namespace Diplomka.Controllers
                                                 application.DepotID = distancefromDepot.OrderBy(p => p.Distance).FirstOrDefault(p => !String.IsNullOrEmpty(p.ID_FirstPoint.ToString())).ID_FirstPoint;
                                                 int CarsToNeed;
                                                 if (order.Volume % 5 == 0)
+                                                {
                                                     CarsToNeed = order.Volume / 5;
+                                                }
                                                 else
+                                                {
                                                     CarsToNeed = order.Volume / 5 + 1;
+                                                }
                                                 for (int j = 0; j < CarsToNeed - 1; j++)
                                                 {
                                                     application.CarID = CurrentCars.Where(i => i.DepotID == application.DepotID).FirstOrDefault(s => s.Status == "Свободен").CarID;
@@ -412,6 +419,8 @@ namespace Diplomka.Controllers
                             // }
                             //}
                         }
+                    }
+                        
                 }
             }
             foreach (Application application1 in PreApplication)
@@ -435,8 +444,8 @@ namespace Diplomka.Controllers
             }
             db.SaveChanges();
 
-            // Переход на главную страницу приложения
-            return RedirectToAction("Index");
+            // Переход на страницу приложения с заявками
+            return RedirectToAction("Applications");
         }
 
         public IActionResult Privacy()

@@ -4,6 +4,8 @@ namespace Diplomka.Models
 {
     public class MyBaseContext : DbContext
     {
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Factory> Factories { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
@@ -19,6 +21,26 @@ namespace Diplomka.Models
                : base(options)
         {
             Database.EnsureCreated();
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            string adminRoleName = "Администратор";
+            string plannerRoleName = "Планировщик";
+            string clientRoleName = "Заказчик";
+
+            string adminUserName = "Администратор";
+            string adminPassword = "admin";
+            
+            // добавляем роли
+            Role adminRole = new Role { Id = 1, Name = adminRoleName };
+            Role plannerRole = new Role { Id = 2, Name = plannerRoleName };
+            Role clientRole = new Role { Id = 3, Name = clientRoleName };
+            User adminUser = new User { Id = 1, UserName = adminUserName, Password = adminPassword, RoleId = adminRole.Id};
+
+            modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, plannerRole, clientRole});
+            modelBuilder.Entity<User>().HasData(new User[] { adminUser });
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
