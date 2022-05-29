@@ -29,19 +29,10 @@ namespace Diplomka.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (User.IsInRole(RoleEnum.Администратор.ToString()))
-            {
-                return RedirectToAction("Applications", "Application");
-            }
-            if (User.IsInRole(RoleEnum.Планировщик.ToString()))
-            {
-                return RedirectToAction("Applications", "Application");
-            }
-            if (User.IsInRole(RoleEnum.Заказчик.ToString()))
-            {
-                return RedirectToAction("Orders", "Order");
-            }
-            return View();
+            if (String.IsNullOrEmpty(UserName))
+                return View();
+            else
+                return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
@@ -56,18 +47,8 @@ namespace Diplomka.Controllers
                 if (user != null)
                 {
                     await Authenticate(user); // аутентификация
-                    if (User.IsInRole(RoleEnum.Администратор.ToString()))
-                    {
-                        return RedirectToAction("Applications", "Application");
-                    }
-                    if (User.IsInRole(RoleEnum.Планировщик.ToString()))
-                    {
-                        return RedirectToAction("Applications", "Application");
-                    }
-                    if (User.IsInRole(RoleEnum.Заказчик.ToString()))
-                    {
-                        return RedirectToAction("Orders", "Order");
-                    }
+                    UserName = user.UserName;
+                    return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
