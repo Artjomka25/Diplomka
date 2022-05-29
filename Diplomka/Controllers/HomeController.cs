@@ -21,7 +21,12 @@ namespace Diplomka.Controllers
         {
             db = context;
         }
-        
+
+        public ActionResult Index()
+        {           
+            return View();
+        }
+
         [HttpGet]
         public ActionResult Applications(string status)
         {

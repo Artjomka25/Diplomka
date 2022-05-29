@@ -1,0 +1,22 @@
+﻿@using Diplomka.Models
+@model Diplomka.Models.CommonList
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Данные о пользователе</title>
+</head>
+	<h2>Данные о пользователе</h2>
+	<table class="table">
+    <tr>
+        <th>Роль</th>
+        <th>Пользователь</th>      
+    </tr>
+    <tr >
+        <td>@Diplomka.Controllers.AccountController.Role</td>
+        <td>@Diplomka.Controllers.AccountController.UserName</td>  
+    </tr>              
+</table>
+</html>

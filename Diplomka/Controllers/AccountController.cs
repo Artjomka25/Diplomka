@@ -18,24 +18,24 @@ namespace Diplomka.Controllers
     public class AccountController : Controller
     {
         MyBaseContext db;
-
+        public static string Role = "";
+        public static string UserName = "";
         public AccountController(MyBaseContext context)
         {
             db = context;
         }
 
         //=======================================================
-
         [HttpGet]
         public IActionResult Login()
         {
             if (User.IsInRole(RoleEnum.Администратор.ToString()))
             {
-                return RedirectToAction("Applications", "Home");
+                return RedirectToAction("Applications", "Application");
             }
             if (User.IsInRole(RoleEnum.Планировщик.ToString()))
             {
-                return RedirectToAction("Applications", "Home");
+                return RedirectToAction("Applications", "Application");
             }
             if (User.IsInRole(RoleEnum.Заказчик.ToString()))
             {
@@ -50,18 +50,19 @@ namespace Diplomka.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await db.Users.Include(u => u.Role)
-                    .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
+                User user = await db.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.UserName == model.UserName && u.Password == model.Password);
                 if (user != null)
                 {
                     await Authenticate(user); // аутентификация
                     if (User.IsInRole(RoleEnum.Администратор.ToString()))
                     {
-                        return RedirectToAction("Applications", "Home");
+                        return RedirectToAction("Applications", "Application");
                     }
                     if (User.IsInRole(RoleEnum.Планировщик.ToString()))
                     {
-                        return RedirectToAction("Applications", "Home");
+                        return RedirectToAction("Applications", "Application");
                     }
                     if (User.IsInRole(RoleEnum.Заказчик.ToString()))
                     {
@@ -71,18 +72,18 @@ namespace Diplomka.Controllers
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
             return View(model);
-        } 
+        }
         private async Task Authenticate(User user)
         {
             // создаем один claim
-            var claims = new List<Claim>
-            {
+            var claims = new List<Claim>{
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.Name.ToString())
             };
+            Role = user.Role.Name;
             // создаем объект ClaimsIdentity
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity.DefaultRoleClaimType);
             // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
