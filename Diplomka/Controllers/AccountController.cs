@@ -91,7 +91,8 @@ namespace Diplomka.Controllers
         //=====================================================
         public IActionResult Logout()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            Role = "";
+            UserName = "";
             return RedirectToAction("Login");
         }
 

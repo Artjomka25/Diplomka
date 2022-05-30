@@ -1,0 +1,33 @@
+﻿@model Diplomka.Models.User
+@{
+    ViewBag.Title = "Редактирование данных";
+}
+
+<h3>Редактирование данных пользователя</h3>
+
+<form asp-action="Edit" asp-controller="Home" asp-route-id="@Model.Id">
+    <div class="form-group">
+        <label hidden="true" asp-for="Id" class="control-label">Id пользователя</label>
+        <input type="number" hidden="true" asp-for="Id" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="UserName" class="control-label">Имя</label>
+        <input type="text" asp-for="UserName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password" class="control-label">Пароль</label>
+        <input type="text" asp-for="Password" class="form-control" />
+    </div>  
+    
+    <div class="form-group">
+        <label asp-for="RoleId" class="control-label">Роль</label>
+        <select asp-for="RoleId" asp-items="ViewBag.Role" class="form-control"></select>
+    </div>  
+
+    <div class="form-group">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="BackToCars" class="btn btn-primary"> Отмена</a>

@@ -33,10 +33,10 @@ namespace Diplomka.Models
             string adminPassword = "admin";
             
             // добавляем роли
-            Role adminRole = new Role { Id = 1, Name = adminRoleName };
-            Role plannerRole = new Role { Id = 2, Name = plannerRoleName };
-            Role clientRole = new Role { Id = 3, Name = clientRoleName };
-            User adminUser = new User { Id = 1, UserName = adminUserName, Password = adminPassword, RoleId = adminRole.Id};
+            Role adminRole = new Role { RoleId = 1, Name = adminRoleName };
+            Role plannerRole = new Role { RoleId = 2, Name = plannerRoleName };
+            Role clientRole = new Role { RoleId = 3, Name = clientRoleName };
+            User adminUser = new User { Id = 1, UserName = adminUserName, Password = adminPassword, RoleId = adminRole.RoleId};
 
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, plannerRole, clientRole});
             modelBuilder.Entity<User>().HasData(new User[] { adminUser });

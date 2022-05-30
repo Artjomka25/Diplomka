@@ -12,8 +12,10 @@
 
 <body>
     <h2>Склады</h2>
-
-    <h5><a asp-action="Create"> Новый склад  </a><a asp-action="CargoRemnants">   | Остатки грузов</a></h5>
+    @if (Diplomka.Controllers.AccountController.Role=="Администратор")
+    {
+        <h5><a asp-action="Create"> Новый склад  </a><a asp-action="CargoRemnants">   | Остатки грузов</a></h5>
+    } 
 
     <table class="table table-bordered table-primary">
         <tr>
@@ -29,9 +31,12 @@
             <tr bgcolor = "#FFFFFF">
                 <td>@warehouse.WarehouseID</td>
                 <td>@warehouse.Name</td>
-                <td>@warehouse.Address</td>                             
-                <td><a asp-action="Edit" asp-controller="Warehouse" asp-route-id="@warehouse.WarehouseID">Изменить</a></td> 
-                <td><a asp-action="Delete" asp-controller="Warehouse" asp-route-id="@warehouse.WarehouseID">Удалить</a></td>    
+                <td>@warehouse.Address</td>         
+                @if (Diplomka.Controllers.AccountController.Role=="Администратор")
+                {
+                    <td><a asp-action="Edit" asp-controller="Warehouse" asp-route-id="@warehouse.WarehouseID">Изменить</a></td> 
+                    <td><a asp-action="Delete" asp-controller="Warehouse" asp-route-id="@warehouse.WarehouseID">Удалить</a></td>                    } 
+                
             </tr>
         }      
     </table>

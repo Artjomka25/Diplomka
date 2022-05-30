@@ -27,7 +27,97 @@ namespace Diplomka.Controllers
             return View();
         }
 
+        public ActionResult Users()
+        {
+            IQueryable<User> users = db.Users.Include(u => u.Role);
+            return View(users.ToList());
+        }
+
+        [Authorize(Roles = "Администратор")]
+        public IActionResult Create()
+        {
+            ViewBag.Role = new SelectList(db.Roles.ToList(), "RoleId", "Name");
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Администратор")]
+        public async Task<IActionResult> Create(User user)
+        {      
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Users");
+        }
+
+        //=======================================================
+        [Authorize(Roles = "Администратор")]
+        public ActionResult BackToHome()
+        {
+            // Переход на главную страницу приложения
+            return RedirectToAction("Users");
+        }
+
+        //=======================================================
+
+        [Authorize(Roles = "Администратор")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            ViewBag.Role = new SelectList(db.Roles.ToList(), "RoleId", "Name");
+
+            if (id != null)
+            {
+                User user = await db.Users.FirstOrDefaultAsync(c => c.Id == id);
+                if (user != null)
+                    return View(user);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Администратор")]
+        public async Task<IActionResult> Edit(User user)
+        {
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Users");
+        }
+
+        //=======================================================
+
         [HttpGet]
+        [Authorize(Roles = "Администратор")]
+        [ActionName("Delete")]
+        public async Task<IActionResult> ConfirmDelete(int? id)
+        {
+            if (id != null)
+            {
+                User user = await db.Users.FirstOrDefaultAsync(d => d.Id == id);
+                if (user != null)
+                    return View(user);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Администратор")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id != null)
+            {
+                User user = await db.Users.FirstOrDefaultAsync(d => d.Id == id);
+                if (user != null)
+                {
+                    db.Users.Remove(user);
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Users");
+                }
+            }
+            return NotFound();
+        }
+        //=======================================================
+
+        [HttpGet]
+        [Authorize(Roles = "Администратор, Планировщик")]
         public ActionResult Applications(string status)
         {
             IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)
@@ -54,6 +144,7 @@ namespace Diplomka.Controllers
 
         //===========================================
         [HttpPost]
+        [Authorize(Roles = "Администратор, Планировщик")]
         public async Task<IActionResult> Applications(SortState sortOrder = SortState.DeliveryDateAsc)
         {
             IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)

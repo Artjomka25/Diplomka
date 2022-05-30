@@ -13,7 +13,10 @@
 <body>
     <h2>Машины</h2>
 
-    <h5><a asp-action="CreateCar"> Новая машина</a></h5>
+    @if (Diplomka.Controllers.AccountController.Role=="Администратор")
+    {
+        <h5><a asp-action="CreateCar"> Новая машина</a></h5>
+    }
 
     <table class="table table-bordered table-primary">
         <tr>
@@ -34,8 +37,11 @@
                 <td>@car.PlateNumber</td>  
                 <td>@car.Status</td>       
                 <td>@car.Depot.Name</td>       
-                <td><a asp-action="EditCar" asp-controller="Depot" asp-route-id="@car.CarID">Изменить</a></td> 
-                <td><a asp-action="DeleteCar" asp-controller="Depot" asp-route-id="@car.CarID">Удалить</a></td>    
+                @if (Diplomka.Controllers.AccountController.Role=="Администратор")
+                {
+                    <td><a asp-action="EditCar" asp-controller="Depot" asp-route-id="@car.CarID">Изменить</a></td> 
+                    <td><a asp-action="DeleteCar" asp-controller="Depot" asp-route-id="@car.CarID">Удалить</a></td> 
+                }                  
             </tr>
         }      
     </table>

@@ -22,15 +22,16 @@ namespace Diplomka.Controllers
             db = context;
         }
 
+        [Authorize(Roles = "Администратор, Планировщик, Заказчик")]
         public ActionResult Orders(string status)
         {
             IQueryable<Order> orders = db.Orders.Include(o => o.Factory)
                                                  .Include(o => o.Grain);
             return View(orders.ToList());
         }
-       
-        //=======================================================
 
+        //=======================================================
+        [Authorize(Roles = "Заказчик")]
         public IActionResult Create()
         {
             ViewBag.Factory = new SelectList(db.Factories.ToList(), "FactoryID", "Name");
@@ -39,6 +40,7 @@ namespace Diplomka.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Заказчик")]
         public async Task<IActionResult> Create(Order order)
         {
             Grain grain = await db.Grains.FirstOrDefaultAsync(g => g.GrainID == order.GrainID);
@@ -60,6 +62,7 @@ namespace Diplomka.Controllers
 
         //=======================================================
 
+        [Authorize(Roles = "Заказчик")]
         public async Task<IActionResult> Edit(int? id)
         {
             ViewBag.Factory = new SelectList(db.Factories.ToList(), "FactoryID", "Name");
@@ -75,6 +78,7 @@ namespace Diplomka.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Заказчик")]
         public async Task<IActionResult> Edit(Order orders)
         {
             Grain grain = await db.Grains.FirstOrDefaultAsync(g => g.GrainID == orders.GrainID);
@@ -89,6 +93,7 @@ namespace Diplomka.Controllers
 
         [HttpGet]
         [ActionName("Delete")]
+        [Authorize(Roles = "Заказчик")]
         public async Task<IActionResult> ConfirmDelete(int? id)
         {
             if (id != null)
@@ -101,6 +106,7 @@ namespace Diplomka.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Заказчик")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id != null)

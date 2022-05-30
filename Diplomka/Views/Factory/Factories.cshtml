@@ -12,8 +12,10 @@
 
 <body>
     <h2>Заводы</h2>
-
-    <h5><a asp-action="Create"> Новый завод</a></h5>
+    @if (Diplomka.Controllers.AccountController.Role=="Администратор")
+    {
+        <h5><a asp-action="Create"> Новый завод</a></h5>
+    }
 
     <table class="table table-bordered table-primary">
         <tr>
@@ -29,9 +31,13 @@
             <tr bgcolor = "#FFFFFF">
                 <td>@factory.FactoryID</td>
                 <td>@factory.Name</td>
-                <td>@factory.Address</td>                             
-                <td><a asp-action="Edit" asp-controller="Factory" asp-route-id="@factory.FactoryID">Изменить</a></td> 
-                <td><a asp-action="Delete" asp-controller="Factory" asp-route-id="@factory.FactoryID">Удалить</a></td>    
+                <td>@factory.Address</td>    
+                 @if (Diplomka.Controllers.AccountController.Role=="Администратор")
+                {
+                     <td><a asp-action="Edit" asp-controller="Factory" asp-route-id="@factory.FactoryID">Изменить</a></td> 
+                     <td><a asp-action="Delete" asp-controller="Factory" asp-route-id="@factory.FactoryID">Удалить</a></td>       
+                }  
+                
             </tr>
         }      
     </table>
