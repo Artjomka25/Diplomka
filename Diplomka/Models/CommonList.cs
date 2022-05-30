@@ -9,6 +9,8 @@ namespace Diplomka.Models
 
         public SelectList Orders { get; set; }
         public SelectList Grains { get; set; }
+        public SelectList Factories { get; set; }
+
 
     }
 }

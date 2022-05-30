@@ -118,52 +118,41 @@ namespace Diplomka.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Администратор, Планировщик")]
-        public ActionResult Applications(string status)
+        public ActionResult Applications(string factory, string grain)
         {
             IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)
-                                                     .Include(p => p.Order)
-                                                     .Include(p => p.Depot)
-                                                     .Include(p => p.Car)
-                                                     .Include(p => p.Driver);
-            // Фильтрация по статусу заказа
-            if (!String.IsNullOrEmpty(status) && !status.Equals("Все"))
+                                                                 .Include(p => p.Order)
+                                                                 .Include(p => p.Depot)
+                                                                 .Include(p => p.Car)
+                                                                 .Include(p => p.Driver);
+            // Фильтрация по заказчику
+            if (!String.IsNullOrEmpty(factory) && !factory.Equals("Все"))
             {
-                applications = applications.Where(p => p.Order.Status == status);
+                applications = applications.Where(p => p.Order.Factory.Name == factory);
+            }
+            if (!String.IsNullOrEmpty(grain) && !grain.Equals("Все"))
+            {
+                applications = applications.Where(p => p.Order.Grain.Name == grain);
             }
 
-            List<string> list = new List<string>() { "Все", "Активен", "Выполнен" };
-            
+            List<Factory> factories = db.Factories.ToList();
+            // устанавливаем начальный элемент, который позволит выбрать всех
+            factories.Insert(0, new Factory { Name = "Все", FactoryID = 0 });
+
+            List<Grain> grains = db.Grains.ToList();
+            // устанавливаем начальный элемент, который позволит выбрать всех
+            grains.Insert(0, new Grain { Name = "Все", GrainID = 0 });
+
             CommonList commonList = new CommonList
             {
                 Applications = applications.ToList(),
-                Orders = new SelectList(list, status)
+                Factories = new SelectList(factories, "FactoryID", "Name"),
+                Grains = new SelectList(grains, "GrainID", "Name")
+
             };
-            
-            return View(commonList);
+            return View(commonList);            
         }
-
-        //===========================================
-        [HttpPost]
-        [Authorize(Roles = "Администратор, Планировщик")]
-        public async Task<IActionResult> Applications(SortState sortOrder = SortState.DeliveryDateAsc)
-        {
-            IQueryable<Application> applications = db.Applications.Include(p => p.Warehouse)
-                                                                             .Include(p => p.Order)
-                                                                             .Include(p => p.Depot)
-                                                                             .Include(p => p.Car)
-                                                                             .Include(p => p.Driver);
-
-            ViewData["DeliveryDateSort"] = sortOrder == SortState.DeliveryDateAsc ?
-                                          SortState.DeliveryDateDesc : SortState.DeliveryDateAsc;
-            applications = sortOrder switch
-            {
-                SortState.DeliveryDateAsc => applications.OrderBy(s => s.FullPrice),
-                SortState.DeliveryDateDesc => applications.OrderByDescending(s => s.FullPrice),
-                _ => applications.OrderBy(s => s.ApplicationID),
-            };            
-            return View(await applications.AsNoTracking().ToListAsync());
-        }
-
+                
         //=======================================================
 
         public IActionResult CreatePlan()

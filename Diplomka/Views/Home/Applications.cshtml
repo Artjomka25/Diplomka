@@ -16,8 +16,11 @@
           
 <form method="get">
     <div class="form-inline">
-        <label class="control-label">Статусы:&nbsp;</label>
-        <select name="Status" asp-items="Model.Orders" class="form-control"></select>
+        <label class="control-label">Заказчик:&nbsp;</label>
+        <select name="factory" asp-items="Model.Factories" class="form-control"></select>
+        <label>&nbsp;&nbsp;</label>
+        <label class="control-label">Вид зерна:&nbsp;</label>
+        <select name="grain" asp-items="Model.Orders" class="form-control"></select>
         <label>&nbsp;&nbsp;</label>
         <input type="submit" value="Фильтр" class="btn btn-primary" />
         <br />
@@ -35,10 +38,7 @@
         <th>Водитель</th>
         <th>Полное расстояние</th>
         <th>Полная цена</th>
-        <th>
-            <a asp-action="Applications" asp-route-sortOrder="@ViewBag.DeliveryDateSort">
-                Дата доставки
-            </a>
+        <th>Дата доставки
         </th>
         <th>Статус</th>
     </tr>
